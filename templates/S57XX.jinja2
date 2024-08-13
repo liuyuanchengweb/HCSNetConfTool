@@ -58,7 +58,7 @@ aaa
 {%- if not basic.option_manage_mode %}
 interface {{ basic.manage_int }}
 {%- if basic.option_manage_vrf %}
- ip binding vpn-instance {{ basic.manage_vrf_name }}
+ ip binding vpn-instance {{ basic.manage_vrf_name.vrf_name }}
 {%- endif %}
  ip address {{ basic.manage_ip }} {{ basic.manage_mask }}
 #
@@ -105,7 +105,7 @@ interface LoopBack{{ data.id }}
 {%- include 'create_bfd.jinja2' %}
 {% endif -%}
 {%- if basic.option_manage_gw and basic.option_manage_vrf %}
-ip route-static vpn-instance {{ basic.manage_vrf_data.vrf_name }} 0.0.0.0 0 {{ basic.manage_gw_ip }}
+ip route-static vpn-instance {{ basic.manage_vrf_name.vrf_name }} 0.0.0.0 0 {{ basic.manage_gw_ip }}
 #
 {% elif basic.option_manage_gw %}
 ip route-static 0.0.0.0 0 {{ basic.manage_gw_ip }}

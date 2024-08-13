@@ -1,7 +1,7 @@
 import ipaddress
 import re
 import logging
-from typing import Dict, List, Any
+from typing import List
 from src.controller.table_head_args import (create_global_vlan,
                                             create_basic,
                                             create_snmp,
@@ -287,6 +287,15 @@ class DeviceConfData:
         logging.debug("完成获取设备数据列表")
         return cls.device_list
 
+    @staticmethod
+    def get_mgmt_vrf(vrf_data: List, vrf_name: str):
+        try:
+            for i in vrf_data:
+                if i['vrf_name'] == vrf_name:
+                    return i
+        except TypeError:
+            return False
+
     def get_basic_data(self, manage_gw_ip, manage_vrf_name, option_manage_mode, sftp):
         """
         获取基本配置数据。
@@ -307,11 +316,21 @@ class DeviceConfData:
         basic_config = basic_datas[self.ci_name]
         if manage_gw_ip:
             basic_config[0]['option_manage_gw'] = True
+            basic_config[0]['manage_gw_ip'] = manage_gw_ip
         if manage_vrf_name:
             basic_config[0]['option_manage_vrf'] = True
+            vrf = self.get_vrf_data()
+            vrf_data = self.get_mgmt_vrf(vrf, manage_vrf_name)
+            if vrf_data:
+                basic_config[0]['manage_vrf_name'] = vrf_data
+            else:
+                basic_config[0]['option_manage_vrf'] = vrf_data
         basic_config[0]['option_manage_mode'] = option_manage_mode
+        if option_manage_mode:
+            basic_config[0]['manage_int'] = f"vlanif{basic_datas['manage_vlan']}"
+        else:
+            basic_config[0]['manage_int'] = f"MEth0/0/0"
         basic_config[0]['sftp'] = sftp
-
         logging.debug("完成获取基本配置数据")
         return basic_config[0]
 
