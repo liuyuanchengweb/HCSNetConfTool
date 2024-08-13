@@ -23,8 +23,10 @@ class AppConfigLoader:
 
     @property
     def data_dir(self):
-        data_dir = str(Path(self.base_dir).joinpath(self.config_class.DATA_DIR))
-        return data_dir
+        data_dir = Path(self.base_dir).joinpath(self.config_class.DATA_DIR)
+        if not data_dir.exists():
+            data_dir.mkdir(parents=True, exist_ok=True)
+        return str(data_dir)
 
     @property
     def templates_dir(self):
@@ -33,8 +35,15 @@ class AppConfigLoader:
 
     @property
     def logs_dir(self):
-        logs_dir = str(Path(self.base_dir).joinpath(self.config_class.LOGS_DIR))
-        return logs_dir
+        # 计算日志目录的完整路径
+        logs_dir = Path(self.base_dir).joinpath(self.config_class.LOGS_DIR)
+
+        # 检查目录是否存在，如果不存在则创建
+        if not logs_dir.exists():
+            logs_dir.mkdir(parents=True, exist_ok=True)
+
+        # 返回目录路径
+        return str(logs_dir)
 
     @property
     def lld_file_name(self):

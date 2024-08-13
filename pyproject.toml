@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "create-dc-sw-config"
+name = "HSCNetConfTool"
 version = "0.1.0"
 description = ""
 authors = ["liuyuanchengweb <1046404397@qq.com>"]

@@ -1,12 +1,11 @@
 import argparse
 import logging
-from src.config.dev_config_loader import dev_config_loader
 from src.config.app_config_loader import app_config
 from src.controller import RenderConfig, CreateJinja2, DeviceConfData
-from src.init_pack.init_config import InitConfig
 
 
 def run():
+    from src.config.dev_config_loader import dev_config_loader
     basic = dev_config_loader.get_basic_config
     snmp = dev_config_loader.get_snmp_config
     ci_name = dev_config_loader.get_ci_names
@@ -24,6 +23,7 @@ def run():
 
 
 def init():
+    from src.init_pack.init_config import InitConfig
     init_config = InitConfig()
     init_config.init()
 
