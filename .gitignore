@@ -11,6 +11,8 @@
 *.db3
 *.dump
 *.xlsx
+*.png
+*.yaml
 .idea/
 .build/
 .dist/

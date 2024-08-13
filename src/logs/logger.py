@@ -29,7 +29,7 @@ def configure_logging(log_dir, log_file='app.log', file_log_level=logging.DEBUG,
     file_handler = RotatingFileHandler(log_file_path, maxBytes=10485760, backupCount=5, encoding='utf-8')
 
     # 设置日志格式，包括时间、日志级别、模块名称、方法名称、行号以及消息
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)d - %(message)s')
+    formatter = logging.Formatter('%(asctime)s|%(levelname)s|%(module)s|%(funcName)s|%(lineno)d|%(message)s')
     file_handler.setFormatter(formatter)
 
     # 获取或创建基于当前模块名的记录器
