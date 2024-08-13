@@ -1,0 +1,35 @@
+{%- if basic.option_manage_mode -%}
+{%- set Manage_interface = basic.manage_int + basic.manage_vlan -%}
+{% else %}
+{%- set Manage_interface = basic.manage_int -%}
+{%- endif -%}
+snmp-agent
+#
+{%- if snmp.version=="v3" %}
+snmp-agent sys-info version v3
+snmp-agent group v3 user privacy write-view View_ALL notify-view View_ALL
+{%- if snmp.option_target %}
+snmp-agent target-host host-name {{ snmp.target_host_host_name }} trap address udp-domain {{ snmp.target_host }} udp-port {{ snmp.udp_port }} source {{ Manage_interface }} params securityname SNMPv3user v3 privacy
+{% endif %}
+#
+snmp-agent mib-view included View_ALL iso
+snmp-agent usm-user v3 {{ snmp.user }}
+snmp-agent usm-user v3 {{ snmp.user }} group user
+snmp-agent usm-user v3 {{ snmp.user }} authentication-mode {{ snmp.authentication_protocol }} cipher {{ snmp.authentication_pass }}
+snmp-agent usm-user v3 {{ snmp.user }} privacy-mode {{ snmp.encryption_protocol }} cipher {{ snmp.encryption_pass }}
+{% else %}
+snmp-agent sys-info version v2c
+snmp-agent community write cipher {{ snmp.write_community }}
+{% if snmp.option_target %}
+snmp-agent target-host host-name {{ snmp.target_host_host_name }} inform address udp-domain {{ snmp.target_host }} params securityname cipher {{ snmp.read_community }} v2c
+snmp-agent target-host host-name {{ snmp.target_host_host_name }} trap address udp-domain {{ snmp.target_host }} udp-port {{ snmp.udp_port }} source {{ Manage_interface }} params securityname SNMPv3user v3 privacy
+{% endif -%}
+{% endif -%}
+#
+snmp-agent protocol source-status all-interface
+snmp-agent protocol source-status ipv6 all-interface
+#
+undo snmp-agent proxy protocol source-status all-interface
+undo snmp-agent proxy protocol source-status ipv6 all-interface
+#
+snmp-agent trap enable

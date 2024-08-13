@@ -1,0 +1,162 @@
+{%- set consolePass = 'Huawei@123' -%}
+#
+sysname {{ basic.device_name }}
+#
+drop-profile default
+#
+dcb pfc
+{%- if option_mlag %}
+{% include 'dfs_group.jinja2' -%}
+{% endif -%}
+{%- if basic.option_manage_mode %}
+#
+vlan batch {{ basic.manage_vlan }}
+#
+{% else %}
+#
+{%- endif -%}
+{%- if option_batch_vlan %}
+{% include 'vlan_batch.jinja2' %}   
+# 
+{% endif -%}
+{%- if option_mlag %}
+{% include 'v_stp.jinja2' %}
+{% endif -%}
+configuration file auto-save interval 3600 delay 30
+#
+diffserv domain default
+{%- if option_vrf %}
+#
+{%- include 'vrf.jinja2' -%}
+{% endif %}
+bfd
+{%- if basic.option_manage_mode %}
+#
+vlan {{ basic.manage_vlan }}
+ description ManagementVlan
+#
+{% else %}
+#
+{% endif -%}
+{%- if option_global_vlan %}
+{% include 'create_vlan.jinja2' -%}
+{% endif -%}
+dhcp server request-packet all-interface disable
+#
+aaa
+ undo local-user policy security-enhance
+ local-user {{ basic.manage_user }} password irreversible-cipher {{ basic.manage_pass }}
+ local-user {{ basic.manage_user }} service-type {{ basic.manage_pro }}
+ local-user {{ basic.manage_user }} level 3
+#
+{%- if option_gw %}
+{%- include 'create_gw.jinja2' -%}
+{% endif -%}
+{%- if option_l3_vlan %}
+{%- include 'create_l3_vlan.jinja2' -%}
+{% endif -%}
+{%- if not basic.option_manage_mode %}
+interface {{ basic.manage_int }}
+{%- if basic.option_manage_vrf %}
+ ip binding vpn-instance {{ basic.manage_vrf_name }}
+{%- endif %}
+ ip address {{ basic.manage_ip }} {{ basic.manage_mask }}
+#
+{% else %}
+interface {{ basic.manage_int }}{{ basic.manage_vlan }}
+{%- if basic.option_manage_vrf %}
+ ip binding vpn-instance {{ basic.manage_vrf_name }}
+{% endif %}
+ ip address {{ basic.manage_ip }} {{ basic.manage_mask }}
+#
+{%- endif %}
+{%- if option_mlag -%}
+{%- include 'm_lag_eth.jinja2' %}
+{% endif -%}
+{%- if option_server_int -%}
+{%- include 'create_l2_server_eth.jinja2' %}
+{% endif -%}
+{%- if option_ndi_l2 -%}
+{%- include 'create_l2_eth.jinja2' %}
+{% endif -%}
+{%- if option_server_int -%}
+{%- include 'create_l2_server_phy.jinja2' %}
+{% endif -%}
+{%- if option_ndi_l2 -%}
+{%- include 'create_l2_phy.jinja2' %}
+{% endif -%}
+{%- if option_l3_phy -%}
+{%- include 'create_l3_phy.jinja2' %}
+{% endif -%}
+{%- if option_mlag -%}
+{% include 'm_lag_dad.jinja2' %}
+{% endif -%}
+{%- if option_mlag -%}
+{% include 'm_lag_peer_phy.jinja2' %}
+{% endif -%}
+{%- if option_look_back %}
+{%- for data in look_back %}
+interface LoopBack{{ data.id }}
+ ip address {{ data.ip }} {{ data.mask }}
+#
+{% endfor -%}
+{% endif -%}
+{%- if option_bfd %}
+{%- include 'create_bfd.jinja2' %}
+{% endif -%}
+{%- if basic.option_manage_gw and basic.option_manage_vrf %}
+ip route-static vpn-instance {{ basic.manage_vrf_data.vrf_name }} 0.0.0.0 0 {{ basic.manage_gw_ip }}
+#
+{% elif basic.option_manage_gw %}
+ip route-static 0.0.0.0 0 {{ basic.manage_gw_ip }}
+#
+{% else -%}
+{% endif -%}
+{%- if option_static_route %}
+{% include 'create_static_route.jinja2' %}
+#
+{% endif -%}
+{%- if option_snmp %}
+{%- include 'snmp.jinja2' -%}
+{% endif -%}
+lldp enable
+#
+stelnet server enable
+ssh server authentication-type keyboard-interactive enable
+ssh user {{ basic.manage_user }}
+ssh user {{ basic.manage_user }} authentication-type password
+ssh user {{ basic.manage_user }} service-type all
+ssh server-source all-interface
+ssh ipv6 server-source all-interface
+ssh authorization-type default aaa
+{%- if basic.sftp %}
+sftp server enable
+sftp server default-directory flash:
+ssh user {{ basic.manage_user }} sftp-directory flash:
+{% endif %}
+#
+ssh server cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr
+ssh server hmac sha2_512 sha2_256
+ssh server key-exchange dh_group_exchange_sha256 dh_group_exchange_sha1 dh_group14_sha1 ecdh_sha2_nistp256
+ecdh_sha2_nistp384 ecdh_sha2_nistp521
+#
+ssh server publickey rsa rsa_sha2_256 rsa_sha2_512
+#
+ssh server dh-exchange min-len 2048
+#
+ssh client publickey ecc rsa
+#
+ssh client cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr
+ssh client hmac sha2_512 sha2_256
+ssh client key-exchange dh_group_exchange_sha256 dh_group16_sha512
+#
+user-interface con 0
+authentication-mode password
+set authentication password cipher {{ consolePass }}
+#
+user-interface vty 0 4
+authentication-mode aaa
+user privilege level 3
+protocol inbound ssh
+#
+return

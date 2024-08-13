@@ -1,0 +1,40 @@
+{%- for data in server_data | unique_by_eth_trunk %}
+{%- if data.option_vray %}
+{%- if data.option_eth_trunk %}
+interface Eth-Trunk{{ data.eth_trunk }}
+ description {{ data.description | first_part }}
+{%- if data.int_type=='trunk' %}
+ port link-type {{ data.int_type }}
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan {{ data.trunk_vlan }}
+ port trunk pvid vlan {{ data.pvid }}
+{%- endif -%}
+{%- if data.int_type=='access' %}
+ port link-type {{ data.int_type }}
+ port default vlan {{ data.pvid }}
+{% endif -%}
+{%- if data.int_type=='hybrid' %}
+ port link-type {{ data.int_type }}
+ port hybrid pvid vlan {{ data.pvid }}
+ port hybrid tagged vlan {{ data.trunk_vlan }}
+ undo port hybrid untagged vlan 1
+ port hybrid untagged vlan {{ data.untag_vlan }}
+{% endif -%}
+{%- if data.lacp_mode=='static' %}
+ mode lacp-static
+{%- elif data.lacp_mode=='dynamic' %}
+ mode lacp-dynamic
+{% else %}{%- endif -%}
+{%- if data.lacp_timeout_mode %}
+ lacp timeout fast
+{%- endif -%}
+{%- if data.force_up %}
+ lacp force-up
+{%- endif -%}
+{%- if data.option_mlag %}
+ dfs-group 1 m-lag {{ data.m_lag_id }}
+{% endif -%}
+{% endif -%}
+#
+{%- endif -%}
+{% endfor -%}

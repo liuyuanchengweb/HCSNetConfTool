@@ -1,0 +1,13 @@
+{%- for data in l3_phy %}
+interface {{ data.phy }}
+{%- if data.option_vrf %}
+ vpn-instance {{ data.vrf }}
+{%- endif %}
+ ip address {{ data.ip }} {{ data.mask }}
+ {%- if data.vid %}
+ dot1q termination vid {{ data.vid }}
+ {%- endif %}
+ mode lacp-static
+ lacp timeout fast
+#
+{%- endfor -%}

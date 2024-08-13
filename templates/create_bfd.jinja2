@@ -1,0 +1,5 @@
+{% for data in bfd_data %}
+bfd {{ data.bfd_name }} bind peer-ip {{ data.peer_ip }} vpn-instance {{ data.local_vrf }} interface {{ data.interface }} source-ip {{ data.source_ip }} one-arm-echo
+ discriminator local {{ data.discriminator_local }}
+#
+{% endfor %}

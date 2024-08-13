@@ -1,0 +1,6 @@
+#
+dfs-group {{ mlag.dfs_group }}
+ priority {{ mlag.priority }}
+ source ip {{ mlag.dad_ip }} vpn-instance {{ mlag.dad_vrf }} peer {{ mlag.dad_peer_ip }}
+ m-lag up-delay 240 auto-recovery interval 10
+ dual-active detection enhanced enable

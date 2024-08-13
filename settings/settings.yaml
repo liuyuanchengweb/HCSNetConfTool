@@ -1,0 +1,17 @@
+DATA_DIR: data
+LLD_FILE: null
+LLD_FILE_NAME: null
+LOGS_DIR: logs
+SAVE_CONFIG_DIR: save_config
+SETTINGS_DIR: settings
+TEMPLATES_DIR: templates
+template_name:
+  CE168XX: CE68or168.jinja2
+  CE68XX: CE68or168.jinja2
+  S57XX: S57XX.jinja2
+  default: base.jinja2
+# model_mapping:设备型号映射，程序会通过ci_name中获取到设备的型号，通过该映射表获取到对应的模板名称。
+model_mapping:
+  S57: S57XX
+  CE168: CE168XX
+  CE68: CE68XX

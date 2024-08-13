@@ -1,0 +1,10 @@
+{%- set stp_root = basic.device_name|stp_root_filter -%}
+stp bridge-address {{ mlag.v_stp_br_add_mac }}
+stp mode rstp
+stp v-stp enable
+{%- if stp_root %}
+stp instance 0 root primary
+{% endif -%}
+stp bpdu-protection
+stp tc-protection
+#

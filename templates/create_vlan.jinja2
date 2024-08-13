@@ -1,0 +1,7 @@
+{%- for vlan in global_vlan -%}
+{%- for id in vlan.vlan_id -%}
+vlan {{ id }}
+ description {{ vlan.description }}
+#
+{% endfor -%}
+{%- endfor -%}

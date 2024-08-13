@@ -1,0 +1,6 @@
+interface Eth-Trunk{{ mlag.eth_trunk_id }}
+ description peerlink
+ mode lacp-static
+ peer-link {{ mlag.peer_Link }}
+ port vlan exclude 1 
+#

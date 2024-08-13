@@ -1,0 +1,7 @@
+{%- for int_id in mlag.peer_Link_phy %}
+interface {{ int_id }}
+ eth-trunk {{ mlag.eth_trunk_id }}
+ port crc-statistics trigger error-down
+ trap-threshold crc-statistics 100 interval 10
+#
+{%- endfor -%}

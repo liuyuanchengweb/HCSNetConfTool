@@ -1,0 +1,17 @@
+
+# Ignore dynaconf secret files
+.secrets.*
+*.txt
+*.log
+*.pyc
+*.pyo
+*.db
+*.sqlite
+*.sqlite3
+*.db3
+*.dump
+*.xlsx
+.idea/
+.build/
+.dist/
+main.spec

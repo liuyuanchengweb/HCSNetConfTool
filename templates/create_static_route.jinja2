@@ -1,0 +1,7 @@
+{%- for data in static_route %}
+{%- if data.local_vrf=='public' %}
+ip route-static {{ data.destination_net }} {{ data.destination_mask }} {{ data.next_hop }} {% if data.bfd %}track bfd-session {{ data.bfd_name }}{% endif -%}
+{% else %}
+ip route-static {{ data.local_vrf }} {{ data.destination_net }} {{ data.destination_mask }} {{ data.next_hop }} {% if data.bfd %}track bfd-session {{ data.bfd_name }}{% endif -%}
+{% endif -%}
+{% endfor -%}

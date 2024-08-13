@@ -1,0 +1,11 @@
+{%- for data in l3_vlan %}
+interface {{ data.phy }}
+ {%- if data.option_vrf %}
+ ip binding vpn-instance {{ data.vrf }}
+ {%- endif %}
+ ip address {{ data.ip }} {{ data.mask }}
+ {%- if data.option_mac_add %}
+ mac-address {{ data.mac_add }}
+ {% endif -%}
+#
+{%- endfor -%}

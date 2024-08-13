@@ -1,0 +1,7 @@
+{%- for vlan in global_vlan -%}
+{%- if loop.first -%}
+{%- for v in vlan.batch_vlan -%}
+vlan batch {{ v }}
+{%- endfor -%}
+{%- endif -%}    
+{%- endfor %}

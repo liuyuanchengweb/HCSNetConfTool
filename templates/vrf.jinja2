@@ -1,0 +1,10 @@
+{%- for vrf in vrf_data %}
+ip vpn-instance {{ vrf.vrf_name }}
+ ipv4-family
+  route-distinguisher {{ vrf.vrf_rd }}
+{%- if vrf.option_vrf_rt %}
+  vpn-target {{ vrf.vrf_rt }} export-extcommunity
+  vpn-target {{ vrf.vrf_rt }} import-extcommunity
+{% endif %}
+#
+{%- endfor -%}

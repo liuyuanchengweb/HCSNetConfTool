@@ -1,0 +1,5 @@
+interface {{ mlag.dad_phy}}
+ description dadlink
+ ip binding vpn-instance {{ mlag.dad_vrf }}
+ ip address {{ mlag.dad_ip }} {{ mlag.dad_mask }}
+#

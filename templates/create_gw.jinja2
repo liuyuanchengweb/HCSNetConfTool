@@ -1,0 +1,18 @@
+{%- for data in gw %}
+interface Vlanif{{ data.vlan_id }}
+ description {{ data.description }}
+ {%- if data.option_vrf %}
+ ip binding vpn-instance {{ data.gw_vrf }}
+ {%- endif %}
+ {%- if not data.gw_mode %}
+ ip address {{ data.gw_ip }} {{ data.gw_mask }}
+{%- else %}
+ ip address {{ data.gw_local_ip }} {{ data.gw_mask }}
+ vrrp vrid {{ data.vrrp_vrid }} virtual-ip {{ data.gw_ip }}
+{%- endif %}
+{%- if data.option_gw_mac %}
+ mac-address {{ data.gw_mac }}
+{% endif -%}
+#
+{%- endfor -%}
+
